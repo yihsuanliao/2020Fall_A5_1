@@ -3,6 +3,7 @@
 Instructor: John Weible  jweible@illinois.edu
 Assignment on Numpy: "High-Tech Sculptures"
 
+Author: Yi Hsuan Liao (yhliao4); De Zhou Chen (dezhouc2)
 See assignment instructions in the README.md document AND in the
 TO DO comments below.
 """
@@ -76,7 +77,7 @@ def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
         [{'k': 3, 'axes': (1, 2)}, {'k': 1, 'axes': (0, 2)}],
         [{'k': 3, 'axes': (1, 2)}, {'k': 2, 'axes': (0, 2)}],
         [{'k': 3, 'axes': (1, 2)}, {'k': 3, 'axes': (0, 2)}],
-        ]
+    ]
 
     # consider the 3-tuple shape of axes numbered 0, 1, 2 to represent (height, depth, width)
     (height, depth, width) = block.shape
@@ -86,7 +87,30 @@ def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
 
     # TODO: Complete this function for the other situations...
     # Hint, the results will be parts of the 23-item list above, read the Docstring!
+    ## doctest passed:)
 
+    # Create list of the 7 possible 90-degree rotation combinations -- params to call rot90():
+    poss2 = [
+        [{'k': 1, 'axes': (0, 1)}],  # 1-axis rotations:
+        [{'k': 2, 'axes': (0, 1)}],
+        [{'k': 3, 'axes': (0, 1)}],
+        [{'k': 1, 'axes': (0, 2)}],
+        [{'k': 2, 'axes': (0, 2)}],
+        [{'k': 3, 'axes': (0, 2)}],
+        [{'k': 1, 'axes': (1, 2)}],
+    ]
+    if height == depth != width or height != depth == width or height == depth != width:  # 其中兩個條件相等就return poss2
+        return poss2
+
+    # Create list of the 3 possible 180-degree rotation combinations -- params to call rot180():
+    poss3 = [
+        [{'k': 1, 'axes': (0, 1)}],  # 1-axis rotations:
+        [{'k': 1, 'axes': (1, 2)}],
+        [{'k': 1, 'axes': (0, 2)}],
+    ]
+    # all three dimensions are different sizes
+    if height != depth != width:
+        return poss3
 
 
 def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> np.ndarray:
@@ -187,7 +211,7 @@ def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> 
                     print('it results in the original 3d array.')
                 else:
                     print('it results in the same array as combination',
-                          orientations_seen.index(r.tostring()))
+                            orientations_seen.index(r.tostring()))
             return False
         else:
             if verbose:
@@ -197,7 +221,6 @@ def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> 
 
 
 if __name__ == '__main__':
-
     # This section will need to be changed significantly. What's here are
     #  just some examples of loading and manipulating the arrays.
 
