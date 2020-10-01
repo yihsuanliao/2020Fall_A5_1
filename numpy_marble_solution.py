@@ -91,22 +91,22 @@ def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
 
     # Create list of the 7 possible 90-degree rotation combinations -- params to call rot90():
     poss2 = [
-        [{'k': 1, 'axes': (0, 1)}],  # 1-axis rotations:
-        [{'k': 2, 'axes': (0, 1)}],
-        [{'k': 3, 'axes': (0, 1)}],
-        [{'k': 1, 'axes': (0, 2)}],
+        [{'k': 2, 'axes': (0, 1)}],  # 1-axis rotations:
         [{'k': 2, 'axes': (0, 2)}],
-        [{'k': 3, 'axes': (0, 2)}],
         [{'k': 1, 'axes': (1, 2)}],
+        [{'k': 2, 'axes': (1, 2)}],
+        [{'k': 3, 'axes': (1, 2)}],
+        [{'k': 3, 'axes': (1, 2)}, {'k': 2, 'axes': (0, 2)}],
+        [{'k': 1, 'axes': (1, 2)}, {'k': 2, 'axes': (0, 2)}],
     ]
     if height == depth != width or height != depth == width or height == depth != width:  # 其中兩個條件相等就return poss2
         return poss2
 
     # Create list of the 3 possible 180-degree rotation combinations -- params to call rot180():
     poss3 = [
-        [{'k': 1, 'axes': (0, 1)}],  # 1-axis rotations:
-        [{'k': 1, 'axes': (1, 2)}],
-        [{'k': 1, 'axes': (0, 2)}],
+        [{'k': 2, 'axes': (0, 1)}],  # 1-axis rotations:
+        [{'k': 2, 'axes': (1, 2)}],
+        [{'k': 2, 'axes': (0, 2)}],
     ]
     # all three dimensions are different sizes
     if height != depth != width:
