@@ -137,6 +137,15 @@ def is_stable(sculpture: np.ndarray) -> bool:
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
+    # 假設sculpture已經是ndarray (scuplture = np.array().reshape())
+    # if value is nAn -> needs to replace 0 so that center of mass works
+    # slice of the bottom of the sculpture
+    center = center_of_mass(sculpture)
+    if center in sculpture[0, :, :]:
+        print("Stable")  # 還要看需不需要傳進dict裡面
+    else:
+        print("Unstable")
+
 
 
 def analyze_sculptures(block_filenames: list, shape_filenames: list):
@@ -151,7 +160,7 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
-
+    # use the center_of_mass to calculate
 
 def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> bool:
     """Given a list of list of 3D rotation combinations suitable for using with np.rot90()
