@@ -140,11 +140,27 @@ def is_stable(sculpture: np.ndarray) -> bool:
     # 假設sculpture已經是ndarray (scuplture = np.array().reshape())
     # if value is nAn -> needs to replace 0 so that center of mass works
     # slice of the bottom of the sculpture
-    center = center_of_mass(sculpture)
-    if center in sculpture[0, :, :]:
-        print("Stable")  # 還要看需不需要傳進dict裡面
-    else:
-        print("Unstable")
+    # use convexhull看com有沒有在base裡面
+        ##center = center_of_mass(sculpture)
+        ##if center in sculpture[0, :, :]:
+        ##    print("Stable")  # 還要看需不需要傳進dict裡面
+        ##else:
+        ##    print("Unstable")
+
+    # output #還要調一下固定寬度 跟tab一格
+    print("Shape File: ", 傳進shapefile)
+    print("Block File:", 傳進blockfile )
+    print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
+    return
+
+
+
+
+    # sculpture_base = sculpture[0, :, :]
+
+    # ch1 = ConvexHull(points=sculpture_base, incremental=True)
+    # print("ch1:")
+    # summarize_hull_properties(ch1)
 
 
 
@@ -160,7 +176,7 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
-    # use the center_of_mass to calculate
+
 
 def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> bool:
     """Given a list of list of 3D rotation combinations suitable for using with np.rot90()
