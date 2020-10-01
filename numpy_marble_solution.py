@@ -102,6 +102,19 @@ def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> 
     """
     # TODO: write the code for this function, which could be as short as one line of code!
     # TODO: Add a few good, working Doctests
+    if shape.shape != block.shape:
+        raise ValueError ("The input arrays don't match in size and shape")
+    return np.where(shape == 1, block, np.nan)
+
+
+
+
+
+
+
+
+
+
 
 
 def is_stable(sculpture: np.ndarray) -> bool:
