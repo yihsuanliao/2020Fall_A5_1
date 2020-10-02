@@ -131,7 +131,7 @@ def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> 
         raise ValueError ("The input arrays don't match in size and shape")
     return np.where(shape == 1, block, np.nan)
     ## Doctests
-    ## 要return一個sculpture變數嗎這樣下面才能直接用 (?
+
 
 def is_stable(sculpture: np.ndarray) -> bool:
     """Given a 'sculpted' NDarray, where number values represent densities and
@@ -145,26 +145,26 @@ def is_stable(sculpture: np.ndarray) -> bool:
 
     ## 假設sculpture已經是ndarray (scuplture = np.array().reshape())
     ## if value is nAn -> needs to replace 0 so that center of mass works
-    sculpture = np.nan_to_num(sculpture, nan = 0)  ## sculpture是不是要從上一個function拿下來啊？
+    sculpture = carve_sculpture_from_density_block(shape_1, marble_block_1)
+    sculpture = np.nan_to_num(sculpture, 0)  # convert nan to zero to make center_of_mass work
     center = center_of_mass(sculpture)
 
     # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
-    ch = ConvexHull(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull? ## 這裡還沒弄完 因為上面sculpture的地方還沒出來
-    #sculpture_base =   ## 這個應該要是二維
-    print("ch")
-
-
-    #if center in sculpture_base:
-    #    print("Stable")  # 還要看需不需要傳進dict裡面
-    #else:
-    #    print("Unstable")
+    sculpture_base = ConvexHull.(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull?因為上面sculpture的地方還沒出來
+    ## ^ 出來的應該要是2d array
+    sculpture_base == center
+    if center in sculpture_base:
+        result == True  # 還要看需不需要傳進dict裡面
+    else:
+        result == False
+    sculpture = bool(sculpture, result)
+    return result
 
 
     # output #還要調一下固定寬度 跟tab一格
     #print("Shape File: ", 傳進shapefile)
     #print("Block File:", 傳進blockfile )
     #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
-    return
 
 
 
