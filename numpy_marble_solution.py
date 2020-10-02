@@ -124,13 +124,26 @@ def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> 
     :param block: array describing densities throughout the raw material block
     :return: array of densities in the resulting sculpture, in same orientation.
     :raises: ValueError if the input arrays don't match in size and shape.
-    """
     # TODO: write the code for this function, which could be as short as one line of code!
     # TODO: Add a few good, working Doctests
+    >>> carve_sculpture_from_density_block(np.array([[[1,2], [3,4]]]), np.array([[[1,2], [5,6]]]))
+    array([[[ 1., nan],
+            [nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2,3], [4,5,6]]]), np.array([[[1,2,3], [7,8,9]]]))
+    array([[[ 1., nan, nan],
+            [nan, nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2,3]]]), np.array([[[10,11,12],[13,15,16]]]))
+    Traceback (most recent call last):
+    ValueError: The input arrays don't match in size and shape
+
+    """
+
+    #return array of densities for sculpture
     if shape.shape != block.shape:
         raise ValueError ("The input arrays don't match in size and shape")
     return np.where(shape == 1, block, np.nan)
-    ## Doctests
 
 
 def is_stable(sculpture: np.ndarray) -> bool:
@@ -145,34 +158,36 @@ def is_stable(sculpture: np.ndarray) -> bool:
 
     ## 假設sculpture已經是ndarray (scuplture = np.array().reshape())
     ## if value is nAn -> needs to replace 0 so that center of mass works
-    sculpture = carve_sculpture_from_density_block(shape_1, marble_block_1)
-    sculpture = np.nan_to_num(sculpture, 0)  # convert nan to zero to make center_of_mass work
+    sculpture = np.nan_to_num(sculpture, nan = 0)  ## sculpture是不是要從上一個function拿下來啊？
     center = center_of_mass(sculpture)
-    if center > 2:
-        center = center[1:]
 
-    ## slice the bottom layer ( last item in the array)
-    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a sqare
-    # nan arrays
-    sculpture_base = np.argwhere(sculpture_base > 0) # return array of points
-    # np.transpose(sculpture_base) (?)
+    # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
+    ch = ConvexHull(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull? ## 這裡還沒弄完 因為上面sculpture的地方還沒出來
+    #sculpture_base =   ## 這個應該要是二維
+    print("ch")
 
-    # use convexhull 看center of mass有沒有在base裡面
-    # get ch1
-    ch1 = ConvexHull(points=sculpture_base, incremental=True)
-    # summarize_hull_properties ( ch1 )
-    ch2 = ch1.add_points(center)
-    # summarize_hull_properties ( ch1 )
-    # compare ch1 and ch2, if ch1 == ch2 return True, else False
-    if ch1 == ch2:
-        return True
+
+    #if center in sculpture_base:
+    #    print("Stable")  # 還要看需不需要傳進dict裡面
+    #else:
+    #    print("Unstable")
 
 
     # output #還要調一下固定寬度 跟tab一格
     #print("Shape File: ", 傳進shapefile)
     #print("Block File:", 傳進blockfile )
     #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
+    return
+
+
+
+
     # sculpture_base = sculpture[0, :, :]
+
+    # ch1 = ConvexHull(points=sculpture_base, incremental=True)
+    # print("ch1:")
+    # summarize_hull_properties(ch1)
+
 
 
 def analyze_sculptures(block_filenames: list, shape_filenames: list):
