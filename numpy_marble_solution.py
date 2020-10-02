@@ -124,14 +124,27 @@ def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> 
     :param block: array describing densities throughout the raw material block
     :return: array of densities in the resulting sculpture, in same orientation.
     :raises: ValueError if the input arrays don't match in size and shape.
-    """
     # TODO: write the code for this function, which could be as short as one line of code!
     # TODO: Add a few good, working Doctests
+    >>> carve_sculpture_from_density_block(np.array([[[1,2], [3,4]]]), np.array([[[1,2], [5,6]]]))
+    array([[[ 1., nan],
+            [nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2,3], [4,5,6]]]), np.array([[[1,2,3], [7,8,9]]]))
+    array([[[ 1., nan, nan],
+            [nan, nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2,3]]]), np.array([[[10,11,12],[13,15,16]]]))
+    Traceback (most recent call last):
+    ValueError: The input arrays don't match in size and shape
+
+    """
+
+    #return array of densities for sculpture
     if shape.shape != block.shape:
         raise ValueError ("The input arrays don't match in size and shape")
     return np.where(shape == 1, block, np.nan)
-    ## Doctests
-    ## 要return一個sculpture變數嗎這樣下面才能直接用 (?
+
 
 def is_stable(sculpture: np.ndarray) -> bool:
     """Given a 'sculpted' NDarray, where number values represent densities and
