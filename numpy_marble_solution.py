@@ -155,38 +155,33 @@ def is_stable(sculpture: np.ndarray) -> bool:
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
+    sculpture = carve_sculpture_from_density_block ( shape_1, marble_block_1 )
+    sculpture = np.nan_to_num ( sculpture, 0 )  # convert nan to zero to make center_of_mass work
+    center = center_of_mass ( sculpture )
+    if center > 2:
+        center = center[1:]
 
-    ## 假設sculpture已經是ndarray (scuplture = np.array().reshape())
-    ## if value is nAn -> needs to replace 0 so that center of mass works
-    sculpture = np.nan_to_num(sculpture, nan = 0)  ## sculpture是不是要從上一個function拿下來啊？
-    center = center_of_mass(sculpture)
+    ## slice the bottom layer ( last item in the array)
+    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a sqare
+    # nan arrays
+    sculpture_base = np.argwhere ( sculpture_base > 0 )  # return array of points
+    # np.transpose(sculpture_base) (?)
 
-    # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
-    ch = ConvexHull(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull? ## 這裡還沒弄完 因為上面sculpture的地方還沒出來
-    #sculpture_base =   ## 這個應該要是二維
-    print("ch")
-
-
-    #if center in sculpture_base:
-    #    print("Stable")  # 還要看需不需要傳進dict裡面
-    #else:
-    #    print("Unstable")
-
+    # use convexhull 看center of mass有沒有在base裡面
+    # get ch1
+    ch1 = ConvexHull ( points=sculpture_base, incremental=True )
+    # summarize_hull_properties ( ch1 )
+    ch2 = ch1.add_points ( center )
+    # summarize_hull_properties ( ch1 )
+    # compare ch1 and ch2, if ch1 == ch2 return True, else False
+    if ch1 == ch2:
+        return True
 
     # output #還要調一下固定寬度 跟tab一格
-    #print("Shape File: ", 傳進shapefile)
-    #print("Block File:", 傳進blockfile )
-    #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
-    return
-
-
-
-
+    # print("Shape File: ", 傳進shapefile)
+    # print("Block File:", 傳進blockfile )
+    # print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
     # sculpture_base = sculpture[0, :, :]
-
-    # ch1 = ConvexHull(points=sculpture_base, incremental=True)
-    # print("ch1:")
-    # summarize_hull_properties(ch1)
 
 
 
