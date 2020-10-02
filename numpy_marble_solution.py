@@ -148,33 +148,31 @@ def is_stable(sculpture: np.ndarray) -> bool:
     sculpture = carve_sculpture_from_density_block(shape_1, marble_block_1)
     sculpture = np.nan_to_num(sculpture, 0)  # convert nan to zero to make center_of_mass work
     center = center_of_mass(sculpture)
+    if center > 2:
+        center = center[1:]
 
-    # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
-    sculpture_base = ConvexHull.(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull?因為上面sculpture的地方還沒出來
-    ## ^ 出來的應該要是2d array
-    sculpture_base == center
-    if center in sculpture_base:
-        result == True  # 還要看需不需要傳進dict裡面
-    else:
-        result == False
-    sculpture = bool(sculpture, result)
-    return result
+    ## slice the bottom layer ( last item in the array)
+    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a sqare
+    # nan arrays
+    sculpture_base = np.argwhere(sculpture_base > 0) # return array of points
+    # np.transpose(sculpture_base) (?)
+
+    # use convexhull 看center of mass有沒有在base裡面
+    # get ch1
+    ch1 = ConvexHull(points=sculpture_base, incremental=True)
+    # summarize_hull_properties ( ch1 )
+    ch2 = ch1.add_points(center)
+    # summarize_hull_properties ( ch1 )
+    # compare ch1 and ch2, if ch1 == ch2 return True, else False
+    if ch1 == ch2:
+        return True
 
 
     # output #還要調一下固定寬度 跟tab一格
     #print("Shape File: ", 傳進shapefile)
     #print("Block File:", 傳進blockfile )
     #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
-
-
-
-
     # sculpture_base = sculpture[0, :, :]
-
-    # ch1 = ConvexHull(points=sculpture_base, incremental=True)
-    # print("ch1:")
-    # summarize_hull_properties(ch1)
-
 
 
 def analyze_sculptures(block_filenames: list, shape_filenames: list):
