@@ -11,7 +11,6 @@ TO DO comments below.
 import numpy as np
 from scipy.ndimage import center_of_mass
 from typing import List
-from scipy.spatial import ConvexHull
 
 
 def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
@@ -124,14 +123,30 @@ def carve_sculpture_from_density_block(shape: np.ndarray, block: np.ndarray) -> 
     :param block: array describing densities throughout the raw material block
     :return: array of densities in the resulting sculpture, in same orientation.
     :raises: ValueError if the input arrays don't match in size and shape.
-    """
+
     # TODO: write the code for this function, which could be as short as one line of code!
     # TODO: Add a few good, working Doctests
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2], [3,4]]]), np.array([[[1,2], [3,4]]]))
+    array([[[ 1., nan],
+            [nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2], [3,4]]]), np.array([[[3,4], [8,9]]]))
+    array([[[ 3., nan],
+            [nan, nan]]])
+
+    >>> carve_sculpture_from_density_block(np.array([[[1,2,3], [2,3,4]]]), np.array([[[1,2], [3,4], [5,6]]]))
+    Traceback (most recent call last):
+    ValueError: The input arrays don't match in size and shape
+    """
+
+    #return array of sculpture densities
     if shape.shape != block.shape:
         raise ValueError ("The input arrays don't match in size and shape")
     return np.where(shape == 1, block, np.nan)
-    ## Doctests
-    ## 要return一個sculpture變數嗎這樣下面才能直接用 (?
+
+
+
 
 def is_stable(sculpture: np.ndarray) -> bool:
     """Given a 'sculpted' NDarray, where number values represent densities and
@@ -142,29 +157,21 @@ def is_stable(sculpture: np.ndarray) -> bool:
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
-
-    ## 假設sculpture已經是ndarray (scuplture = np.array().reshape())
-    ## if value is nAn -> needs to replace 0 so that center of mass works
-    sculpture = np.nan_to_num(sculpture, nan = 0)  ## sculpture是不是要從上一個function拿下來啊？
-    center = center_of_mass(sculpture)
-
-    # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
-    ch = ConvexHull(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull? ## 這裡還沒弄完 因為上面sculpture的地方還沒出來
-    #sculpture_base =   ## 這個應該要是二維
-    print("ch")
-
-
-    #if center in sculpture_base:
-    #    print("Stable")  # 還要看需不需要傳進dict裡面
-    #else:
-    #    print("Unstable")
-
+    # 假設sculpture已經是ndarray (scuplture = np.array().reshape())
+    # if value is nAn -> needs to replace 0 so that center of mass works
+    # slice of the bottom of the sculpture
+    # use convexhull看com有沒有在base裡面
+        ##center = center_of_mass(sculpture)
+        ##if center in sculpture[0, :, :]:
+        ##    print("Stable")  # 還要看需不需要傳進dict裡面
+        ##else:
+        ##    print("Unstable")
 
     # output #還要調一下固定寬度 跟tab一格
     #print("Shape File: ", 傳進shapefile)
     #print("Block File:", 傳進blockfile )
     #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
-    return
+    #return
 
 
 
@@ -183,12 +190,18 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     densities and stabilities.  See the README.md file for an example
     output format.
 
-    :param block_filenames:
-    :param shape_filenames:
-    :return:
+    :param block_filenames: input list to open block npy files
+    :param shape_filenames: input list to open shape npy files
+    :return: rotation, mean density value and status of stable or unstable for each block files in shape files
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
+
+    shape_filenames = np.load(file='data/shape_1.npy')
+    block_filenames = np.load(file='data/marble_block_1.npy')
+
+
+
 
 
 def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> bool:
