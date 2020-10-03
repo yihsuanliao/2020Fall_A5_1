@@ -86,10 +86,6 @@ def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
     if height == depth == width:
         return poss  # return all possibilities, it's a cube
 
-    # TODO: Complete this function for the other situations...
-    # Hint, the results will be parts of the 23-item list above, read the Docstring!
-    ## doctest passed:)
-
     # Create list of the 7 possible 90-degree rotation combinations -- params to call rot90():
     poss2 = [
         [{'k': 2, 'axes': (0, 1)}],  # 1-axis rotations:
@@ -100,7 +96,8 @@ def get_orientations_possible(block: np.ndarray) -> List[List[dict]]:
         [{'k': 3, 'axes': (1, 2)}, {'k': 2, 'axes': (0, 2)}],
         [{'k': 1, 'axes': (1, 2)}, {'k': 2, 'axes': (0, 2)}],
     ]
-    if height == depth != width or height != depth == width or height == depth != width:  # 其中兩個條件相等就return poss2
+    # any two are equal size, return poss2
+    if height == depth != width or height != depth == width or height == depth != width:
         return poss2
 
     # Create list of the 3 possible 180-degree rotation combinations -- params to call rot180():
@@ -152,36 +149,38 @@ def is_stable(sculpture: np.ndarray) -> bool:
     given, whether it will sit stably upon its base.
 
     :param sculpture: NDarray representing a sculpture of variable density material.
-    >>>is_stable(np.array([[[1,2], [3,4]]]))
+    >>> shape_1 = np.array([[1,2,3]])
+    >>> is_stable(np.array([[[1,2], [3,4]]]))
     True
-    >>>is_stable(np.array([[[1,np.nan,np.nan], [np.nan,np.nan,6],[np.nan, np.nan, np.nan]]]))
+    >>> is_stable(np.array([[[1,np.nan,np.nan], [np.nan,np.nan,6],[np.nan, np.nan, np.nan]]]))
     False
 
     """
-    # TODO: Complete this function.
-    # TODO: Add a few good, working Doctests
 
-    sculpture = carve_sculpture_from_density_block(shape_1, marble_block_1)
+    sculpture = carve_sculpture_from_density_block(shape, block)
     sculpture = np.nan_to_num(sculpture, 0)  # convert nan to zero to make center_of_mass work
-    center = center_of_mass(sculpture)
-    if len(center) > 2:
-        center = center[1:]
+    center = list(center_of_mass(sculpture))
+    #if len(center) > 2:
+    #    center = center[1:]
 
-    ## slice the bottom layer ( last item in the array)
-    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a square
+    # slice the bottom layer ( last item in the array) 3d -> 2d -> result a square
+    sculpture_base = sculpture[-1]
     # nan arrays
-    sculpture_base = np.argwhere(sculpture_base)  # return array of points
+    sculpture_base = np.argwhere(sculpture_base).tolist()  # return array of points
     # np.transpose(sculpture_base) (?)
 
     # use convexhull to calculate area and check if its stable or not
     # get area1
-    hull = ConvexHull(sculpture_base, incremental=True)
+    hull = ConvexHull(points=sculpture_base, incremental=True)
     area1 = hull.area
 
+    if len(center) > 2:
+        center = center[1:]
     # add points to calculate new area
-    hull.add_points(center)
+    sculpture_base.append(center)
     # area2 -> after adding center points to hull
-    area2 = hull.area
+    hull2 = ConvexHull(points = sculpture_base)
+    area2 = hull2.area
     # compare area1 and area2, if ch1 == ch2 return True, else False
     if area1 == area2:
         return True
@@ -202,12 +201,12 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
 
-    shapedata = []
-    with load('data/shape_1.npy') as shapefile:
-    with load('data/marble_block_1.npy') as blockfile1:
-        for shapefile in shape_filenames:
-            print("Shape File: ")
-            shape1 = np.load(file='data/shape_1.npy')
+    #shapedata = []
+    #with load('data/shape_1.npy') as shapefile:
+    #with load('data/marble_block_1.npy') as blockfile1:
+    #    for shapefile in shape_filenames:
+    #        print("Shape File: ")
+    #        shape1 = np.load(file='data/shape_1.npy')
 
             #for
 
