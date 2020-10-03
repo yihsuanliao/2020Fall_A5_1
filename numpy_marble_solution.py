@@ -227,12 +227,45 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     densities and stabilities.  See the README.md file for an example
     output format.
 
-    :param block_filenames:
-    :param shape_filenames:
-    :return:
+    :param block_filenames: list as parameter to open block npy files
+    :param shape_filenames: list as parameter to open shape npy files
+    :return: for each shape file, output 5 block files along with rotation and mean density for each block file respectively
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
+
+    shapedata = []
+    with load('data/shape_1.npy') as shapefile:
+    with load('data/marble_block_1.npy') as blockfile1:
+        for shapefile in shape_filenames:
+            print("Shape File: ")
+            shape1 = np.load(file='data/shape_1.npy')
+
+            #for
+
+
+
+
+
+
+
+
+
+
+    #marble_block_1 = np.load(file='data/marble_block_1.npy')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> bool:
