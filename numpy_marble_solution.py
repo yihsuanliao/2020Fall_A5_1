@@ -152,73 +152,45 @@ def is_stable(sculpture: np.ndarray) -> bool:
     given, whether it will sit stably upon its base.
 
     :param sculpture: NDarray representing a sculpture of variable density material.
+
+    # TODO: Complete this function.
+    # TODO: Add a few good, working Doctests
+     >>>is_stable(np.array([[[1,2], [3,4]]]))
+    True
+    >>>is_stable(np.array([[[1,np.nan,np.nan], [np.nan,np.nan,6],[np.nan, np.nan, np.nan]]]))
+    False
     """
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
 
-    ## 假設sculpture已經是ndarray (scuplture = np.array().reshape())
-    ## if value is nAn -> needs to replace 0 so that center of mass works
-    #sculpture = np.nan_to_num(sculpture, nan = 0)  ## sculpture是不是要從上一個function拿下來啊？
-    #center = center_of_mass(sculpture)
-
-    # use convexhull把3d轉成2d 看center of mass有沒有在base裡面
-    #ch = ConvexHull(points=sculpture, incremental=True) ## 2d或3d應該都可以用convex hull? ## 這裡還沒弄完 因為上面sculpture的地方還沒出來
-    #sculpture_base =   ## 這個應該要是二維
-    #print("ch")
-
-
-    #if center in sculpture_base:
-    #    print("Stable")  # 還要看需不需要傳進dict裡面
-    #else:
-    #    print("Unstable")
-
-
-    # output #還要調一下固定寬度 跟tab一格
-    #print("Shape File: ", 傳進shapefile)
-    #print("Block File:", 傳進blockfile )
-    #print("Rotation: {} Mean density: {} {}".format(Rotation, Mean Density, is_stable?))
-    #return
-
-
-
-
-    # sculpture_base = sculpture[0, :, :]
-
-    # ch1 = ConvexHull(points=sculpture_base, incremental=True)
-    # print("ch1:")
-    # summarize_hull_properties
-
-    ##我是分割线——————————————————————————————————————————————————————————
-
     sculpture = carve_sculpture_from_density_block(shape_1, marble_block_1)
     sculpture = np.nan_to_num(sculpture, 0)  # convert nan to zero to make center_of_mass work
     center = center_of_mass(sculpture)
-    if center > 2:
+    if len(center) > 2:
         center = center[1:]
 
     ## slice the bottom layer ( last item in the array)
-    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a sqare
+    sculpture_base = sculpture[-1]  # 3d -> 2d -> result a square
     # nan arrays
-    sculpture_base = np.argwhere(sculpture_base > 0)  # return array of points
+    sculpture_base = np.argwhere(sculpture_base)  # return array of points
     # np.transpose(sculpture_base) (?)
 
-    # use convexhull 看center of mass有沒有在base裡面
-    # get ch1
+    # use convexhull to calculate area and check if its stable or not
+    # get area1
     hull = ConvexHull(sculpture_base, incremental=True)
     area1 = hull.area
 
     # add points to calculate new area
-    # arrays with new points
     hull.add_points(center)
-
-    #area after adding center points to hull
+    # area2 -> after adding center points to hull
     area2 = hull.area
-
-    # compare ch1 and ch2, if ch1 == ch2 return True, else False
+    # compare area1 and area2, if ch1 == ch2 return True, else False
     if area1 == area2:
         return True
     else:
         return False
+
+
 
 
 def analyze_sculptures(block_filenames: list, shape_filenames: list):
@@ -236,33 +208,54 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
 
     shapedata = []
     with load('data/shape_1.npy') as shapefile:
-    with load('data/marble_block_1.npy') as blockfile1:
-        for shapefile in shape_filenames:
-            print("Shape File: ")
-            shape1 = np.load(file='data/shape_1.npy')
+        with load('data/marble_block_1.npy') as blockfile1:
+            for shapefile in shape_filenames:
+                print("Shape File: ", shapefile)
+                shapearrays = np.load(file='data/shape_1.npy')
 
-            #for
+                for blockfile1 in block_filenames:
+                    print("    Block File:",blockfile1)
+                    blockarrays = np.load(file = 'data/marble_block_1.npy')
+                    status = []
+                    orientation = get_orientations_possible(block)
+                    density = carve_sculpture_from_density_block(shape, block)
+                    corrdensity32 = np.nanmean(density.astype('float32'))
+                    status.append(["Rotation: { } Mean density: {corrdensity32}  {if is_stable(density) 'Stable' else 'Unstable'}"])
 
+                    for i in orientation:
+                        if len(i) ==1:
+                            orient0 = np.rot90(block, i = i[0]['i'], axes = (i[0]['axes']))
+                            orient1 = np.rot90(orient1, i = i[1]['i'], axes = (i[1]['axes']))
+                            density = carve_sculpture_from_density_block(shape, orient1)
+                            degree0 = 90 * i[0]['i']
+                            orientbegin = i[1]['axes'][0]
+                            orientbegins = str(orientbegin)
+                            orientend = i[1]['axes'][0]
+                            orientends = str(orientend)
+                            status2 = ["Rotation:{degree0: } axis {orientbegins + 'to' + orientends} Mean density: {corrdensity32} "]
+                            if status2 in status:
+                                status = status
+                            else:
+                                status.append(status2)
 
-
-
-
-
-
-
-
-
-    #marble_block_1 = np.load(file='data/marble_block_1.npy')
-
-
-
-
-
-
-
-
-
-
+                        else:
+                            orient0 = np.rot90(block, i=i[0]['i'], axes=(i[0]['axes']))
+                            orient1 = np.rot90(orient1, i=i[1]['i'], axes=(i[1]['axes']))
+                            density = carve_sculpture_from_density_block(shape, orient1)
+                            degree0 = 90 * i[0]['i']
+                            orientbegin1 = i[0]['axes'][0]
+                            orientbegin1s = str(orientbegin1)
+                            orientend1 = i[0]['axes'][0]
+                            orientend1s = str(orientend1)
+                            degree1 = i[1]['i'] * 90
+                            degree1s = str(degree1)
+                            orientbegin2 = i[1]['axes'][0]
+                            orientend2 = i[1]['axes'][0]
+                            status2 = [f"Rotation:{degree0}  axis {orientbegin1s} + 'to' + {orientend1s} + ',' +  {degree1s}"]
+                            if status2 in status:
+                                status = status
+                            else:
+                                status.append(status2)
 
 
 
@@ -338,6 +331,10 @@ def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> 
 if __name__ == '__main__':
     # This section will need to be changed significantly. What's here are
     #  just some examples of loading and manipulating the arrays.
+    marble_file = []
+    shape_file = []
+
+
 
     # Load a "block" of variable-density marble:
     marble_block_1 = np.load(file='data/marble_block_1.npy')
