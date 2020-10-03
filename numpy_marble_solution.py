@@ -169,12 +169,15 @@ def is_stable(sculpture: np.ndarray) -> bool:
 
     # use convexhull 看center of mass有沒有在base裡面
     # get ch1
-    ch1 = ConvexHull ( points=sculpture_base, incremental=True )
-    # summarize_hull_properties ( ch1 )
-    ch2 = ch1.add_points ( center )
-    # summarize_hull_properties ( ch1 )
+    hull = ConvexHull(points=sculpture_base, incremental=True)
+    area1 = sculpture_base[hull.area]
+
+    # add points to calculate new area
+    hull.add_points(center)
+    area2 = hull.area
+
     # compare ch1 and ch2, if ch1 == ch2 return True, else False
-    if ch1 == ch2:
+    if area1 == area2:
         return True
 
     # output #還要調一下固定寬度 跟tab一格
