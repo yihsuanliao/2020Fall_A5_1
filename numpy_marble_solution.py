@@ -236,27 +236,27 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
                     statusdata.append([degree0str + " axis " + axestr, meandensity32, "Stable" if is_stable(meandensity) else "Unstable"])
 
 
-                else:
-                    orient1 = np.rot90(blockarrays, k = i[0]['k'], axes = i[0]['axes'])
-                    orient2 = np.rot90(orient1, k = i[1]['k'], axes = i[1]['axes'])
-                    meandensity = carve_sculpture_from_density_block(shapearrays, orient2)
-                    meandensity32 = np.nanmean(meandensity.astype('float32'))
-                    #90*k[0]
-                    degree0 = (90 * i[0]['k'])
-                    degree0str = str(degree0)
-                    #90*axes[0]
-                    axes = (90 * i[0]['axes'])
-                    axestr = str(axes)
-                    #90 * k[1]
-                    degree1 = (90 * i[1]['k'])
-                    degree1str = str(degree1)
-                    #90* axes[1]
-                    axes2 = (90 * i[1]['axes'])
-                    axes2str = str(axes2)
+            else:
+                orient1 = np.rot90(blockarrays, k = i[0]['k'], axes = i[0]['axes'])
+                orient2 = np.rot90(orient1, k = i[1]['k'], axes = i[1]['axes'])
+                meandensity = carve_sculpture_from_density_block(shapearrays, orient2)
+                meandensity32 = np.nanmean(meandensity.astype('float32'))
+                #90*k[0]
+                degree0 = (90 * i[0]['k'])
+                degree0str = str(degree0)
+                #90*axes[0]
+                axes = (90 * i[0]['axes'])
+                axestr = str(axes)
+                #90 * k[1]
+                degree1 = (90 * i[1]['k'])
+                degree1str = str(degree1)
+                #90* axes[1]
+                axes2 = (90 * i[1]['axes'])
+                axes2str = str(axes2)
 
-                    #+ degree1str + " axis " + axes2str + " , "
-                    statusdata.append([degree0str + " axis " + axestr + " , " + degree1str + " axis " + axes2str, meandensity32,  "Stable" if is_stable(meandensity) else "Unstable"])
-                    #status = sorted?
+                #+ degree1str + " axis " + axes2str + " , "
+                statusdata.append([degree0str + " axis " + axestr + " , " + degree1str + " axis " + axes2str, meandensity32,  "Stable" if is_stable(meandensity) else "Unstable"])
+                #status = sorted?
 
             for lsp in statusdata:
                 print("            Rotation: {0:32s}  Mean density: {1:<10f}   {2}".format(lsp[0], lsp[1], lsp[2]))
