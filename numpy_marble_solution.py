@@ -192,7 +192,6 @@ def is_stable(sculpture: np.ndarray) -> bool:
 
 
 
-
 def analyze_sculptures(block_filenames: list, shape_filenames: list):
     """Given all the filenames of blocks and sculpture shapes to carve,
     analyze them in all usable block rotations to show their resulting
@@ -216,22 +215,21 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
             blockarrays = np.load(file = 'data/' + blockfile)
             status = []
             meandensity = carve_sculpture_from_density_block(shapearrays, blockarrays)
-            stabletatus = is_stable(meandensity)
+            #stabletatus = is_stable(meandensity)
             meandensity32 = np.nanmean(meandensity.astype('float32'))
-            status.append(["None", meandensity32 + stabletatus])
+            status.append(["None", meandensity32 + {"Stable" if is_stable(meandensity) else "Unstable"}])
 
             for i in get_orientations_possible(blockarrays):
                 if len(i) == 1:
                     orient0 = np.rot90(blockarrays, j = i[0]['j'], axes = (i[0]['axes']))
                     meandensity = carve_sculpture_from_density_block(shapearrays, orient0)
                     meandensity32 = np.nanmean(meandensity.astype('float32'))
-                    stabletatus = is_stable(meandensity)
                     degree0 = 90 * i[0]['j']
                     degree0str = str(degree0)
                     axes = i[0]['axes']
                     axestr = str(axes)
 
-                    status2.append([degree0str + "axis" + axestr + meandensity32 + stabletatus])
+                    status.append([degree0str + "axis" + axestr + meandensity32 + {"Stable" if is_stable(meandensity) else "Unstable"}])
 
 
             else:
@@ -239,7 +237,6 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
                 orient2 = np.rot90(orient1, j = i[1]['j'], axes = i[1]['axes'])
                 density = carve_sculpture_from_density_block(shapearrays, orient2)
                 meandensity32 = np.nanmean(meandensity.astype('float32'))
-                stabletatus = is_stable(meandensity)
 
                 degree0 = 90 * i[0]['j']
                 degree0str = str(degree0)
@@ -251,7 +248,7 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
                 axes2 = 90 * i[1]['axes']
                 axes2str = str(axes2)
 
-                status2.append([degree0str + "axis" + axestr + "," + degree1 + "axis" + axes2 + "," + meandensity32 + stabletatus])
+                status.append([degree0str + "axis" + axestr + "," + degree1str + "axis" + axes2str + "," + meandensity32 + {"Stable" if is_stable(meandensity) else "Unstable"}])
 
 
 
