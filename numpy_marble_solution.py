@@ -196,24 +196,33 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     :param block_filenames: list as parameter to open block npy files
     :param shape_filenames: list as parameter to open shape npy files
     :return: for each shape file, output 5 block files along with rotation and mean density for each block file respectively
+    >>> marble1 = ['marble_block_1.npy']
+    >>> shape1 = ['shape_1.npy']
+    >>> analyze_sculptures(marble1, shape1)
+
+
+    >>> marble2 = ['markble_block_2.npy']
+    >>> shape2 = ['shape_2.npy']
+    >>> analyze_sculptures(marble2, shape2)
+
+
     """
 
     # TODO: Complete this function.
     # TODO: Add a few good, working Doctests
 
 
-    for shapefile in shape_filenames1:
+    for shapefile in shape_filenames:
         print("Shape File: ", shapefile)
         shapearrays = np.load(file='data/' + shapefile)
 
-        for blockfile in block_filenames1:
+        for blockfile in block_filenames:
             print("    Block File:", blockfile)
             blockarrays = np.load(file = 'data/' + blockfile)
             statusdata = []
             meandensity = carve_sculpture_from_density_block(shapearrays, blockarrays)
             meandensity32 = np.nanmean(meandensity.astype('float32'))
-            stable = is_stable(meandensity)
-            statusdata.append(["None", meandensity32, {"Stable" if is_stable(meandensity) else "Unstable"}])
+            statusdata.append(["None", meandensity32, "Stable" if is_stable(meandensity) else "Unstable"])
 
             for i in get_orientations_possible(blockarrays):
                 if len(i) == 1:
@@ -224,30 +233,30 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
                     degree0str = str(degree0)
                     axes = i[0]['axes']
                     axestr = str(axes)
-                    stable = is_stable(meandensity)
-                    statusdata.append([degree0str + " axis " + axestr, meandensity32, {"Stable" if is_stable(meandensity) else "Unstable"}])
+                    statusdata.append([degree0str + " axis " + axestr, meandensity32, "Stable" if is_stable(meandensity) else "Unstable"])
 
 
-            else:
-                orient1 = np.rot90(blockarrays, k = i[0]['k'], axes = i[0]['axes'])
-                orient2 = np.rot90(orient1, k = i[1]['k'], axes = i[1]['axes'])
-                meandensity = carve_sculpture_from_density_block(shapearrays, orient2)
-                meandensity32 = np.nanmean(meandensity.astype('float32'))
-                stable = is_stable(meandensity)
+                else:
+                    orient1 = np.rot90(blockarrays, k = i[0]['k'], axes = i[0]['axes'])
+                    orient2 = np.rot90(orient1, k = i[1]['k'], axes = i[1]['axes'])
+                    meandensity = carve_sculpture_from_density_block(shapearrays, orient2)
+                    meandensity32 = np.nanmean(meandensity.astype('float32'))
+                    #90*k[0]
+                    degree0 = (90 * i[0]['k'])
+                    degree0str = str(degree0)
+                    #90*axes[0]
+                    axes = (90 * i[0]['axes'])
+                    axestr = str(axes)
+                    #90 * k[1]
+                    degree1 = (90 * i[1]['k'])
+                    degree1str = str(degree1)
+                    #90* axes[1]
+                    axes2 = (90 * i[1]['axes'])
+                    axes2str = str(axes2)
 
-                degree0 = (90 * i[0]['k'])
-                degree0str = str(degree0)
-                axes = (90 * i[0]['axes'])
-                axestr = str(axes)
-
-                degree1 = (90 * i[1]['k'])
-                degree1str = str(degree1)
-                axes2 = (90 * i[1]['axes'])
-                axes2str = str(axes2)
-
-
-                statusdata.append([degree0str + " axis " + axestr + " , " + degree1str + " axis " + axes2str + " , ", meandensity32,  {"Stable" if is_stable(meandensity) else "Unstable"}])
-        #status = sorted 怎么处理？
+                    #+ degree1str + " axis " + axes2str + " , "
+                    statusdata.append([degree0str + " axis " + axestr + " , " + degree1str + " axis " + axes2str, meandensity32,  "Stable" if is_stable(meandensity) else "Unstable"])
+                    #status = sorted?
 
             for lsp in statusdata:
                 print("            Rotation: {0:32s}  Mean density: {1:<10f}   {2}".format(lsp[0], lsp[1], lsp[2]))
@@ -327,19 +336,19 @@ if __name__ == '__main__':
     #  just some examples of loading and manipulating the arrays.
     import os
     files = os.listdir('data/')
-    shape_filenames1 = []
-    block_filenames1 = []
+    shape_filenames = []
+    block_filenames = []
     for f in files:
 
         if f.startswith('m'):
-            block_filenames1.append(f)
+            block_filenames.append(f)
         if f.startswith('s'):
-            shape_filenames1.append(f)
+            shape_filenames.append(f)
 
-    block_filenames1 = sorted(block_filenames1)
-    shape_filenames1 = sorted(shape_filenames1)
+    block_filenames = sorted(block_filenames)
+    shape_filenames = sorted(shape_filenames)
 
-    analyze_sculptures(block_filenames1, shape_filenames1)
+    analyze_sculptures(block_filenames, shape_filenames)
 
 
 
