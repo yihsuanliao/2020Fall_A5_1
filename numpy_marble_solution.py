@@ -228,14 +228,13 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
                     axes = i[0]['axes']
                     axestr = str(axes)
                     stable = is_stable(meandensity)
-
                     statusdata.append([degree0str + "axis" + axestr + meandensity32 + {"Stable" if is_stable(meandensity) else "Unstable"}])
 
 
             else:
                 orient1 = np.rot90(blockarrays, j = i[0]['j'], axes = i[0]['axes'])
                 orient2 = np.rot90(orient1, j = i[1]['j'], axes = i[1]['axes'])
-                density = carve_sculpture_from_density_block(shapearrays, orient2)
+                meandensity = carve_sculpture_from_density_block(shapearrays, orient2)
                 meandensity32 = np.nanmean(meandensity.astype('float32'))
                 stable = is_stable(meandensity)
 
