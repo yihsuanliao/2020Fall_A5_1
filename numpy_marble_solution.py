@@ -207,57 +207,51 @@ def analyze_sculptures(block_filenames: list, shape_filenames: list):
     # TODO: Add a few good, working Doctests
 
     shapedata = []
-    with load('data/shape_1.npy') as shapefile:
-        with load('data/marble_block_1.npy') as blockfile1:
-            for shapefile in shape_filenames:
-                print("Shape File: ", shapefile)
-                shapearrays = np.load(file='data/shape_1.npy')
+    for shapefile in shape_filenames:
+        print("Shape File: ", shapefile)
+        shapearrays = np.load(file='data/' + shapefile)
 
-                for blockfile1 in block_filenames:
-                    print("    Block File:",blockfile1)
-                    blockarrays = np.load(file = 'data/marble_block_1.npy')
-                    status = []
-                    orientation = get_orientations_possible(block)
-                    density = carve_sculpture_from_density_block(shape, block)
-                    corrdensity32 = np.nanmean(density.astype('float32'))
-                    status.append(["Rotation: { } Mean density: {corrdensity32}  {if is_stable(density) 'Stable' else 'Unstable'}"])
+        for blockfile in block_filenames:
+            print("    Block File:", blockfile)
+            blockarrays = np.load(file = 'data/' + blockfile)
+            status = []
+            meandensity = carve_sculpture_from_density_block(shapearrays, blockarrays)
+            stabletatus = is_stable(meandensity)
+            meandensity32 = np.nanmean(meandensity.astype('float32'))
+            status.append(["None", meandensity32 + stabletatus])
 
-                    for i in orientation:
-                        if len(i) ==1:
-                            orient0 = np.rot90(block, i = i[0]['i'], axes = (i[0]['axes']))
-                            orient1 = np.rot90(orient1, i = i[1]['i'], axes = (i[1]['axes']))
-                            density = carve_sculpture_from_density_block(shape, orient1)
-                            degree0 = 90 * i[0]['i']
-                            orientbegin = i[1]['axes'][0]
-                            orientbegins = str(orientbegin)
-                            orientend = i[1]['axes'][0]
-                            orientends = str(orientend)
-                            status2 = ["Rotation:{degree0: } axis {orientbegins + 'to' + orientends} Mean density: {corrdensity32} "]
-                            if status2 in status:
-                                status = status
-                            else:
-                                status.append(status2)
+            for i in get_orientations_possible(blockarrays):
+                if len(i) == 1:
+                    orient0 = np.rot90(blockarrays, j = i[0]['j'], axes = (i[0]['axes']))
+                    meandensity = carve_sculpture_from_density_block(shapearrays, orient0)
+                    meandensity32 = np.nanmean(meandensity.astype('float32'))
+                    stabletatus = is_stable(meandensity)
+                    degree0 = 90 * i[0]['j']
+                    degree0str = str(degree0)
+                    axes = i[0]['axes']
+                    axestr = str(axes)
 
-                        else:
-                            orient0 = np.rot90(block, i=i[0]['i'], axes=(i[0]['axes']))
-                            orient1 = np.rot90(orient1, i=i[1]['i'], axes=(i[1]['axes']))
-                            density = carve_sculpture_from_density_block(shape, orient1)
-                            degree0 = 90 * i[0]['i']
-                            orientbegin1 = i[0]['axes'][0]
-                            orientbegin1s = str(orientbegin1)
-                            orientend1 = i[0]['axes'][0]
-                            orientend1s = str(orientend1)
-                            degree1 = i[1]['i'] * 90
-                            degree1s = str(degree1)
-                            orientbegin2 = i[1]['axes'][0]
-                            orientend2 = i[1]['axes'][0]
-                            status2 = [f"Rotation:{degree0}  axis {orientbegin1s} + 'to' + {orientend1s} + ',' +  {degree1s}"]
-                            if status2 in status:
-                                status = status
-                            else:
-                                status.append(status2)
+                    status2.append([degree0str + "axis" + axestr + meandensity32 + stabletatus])
 
 
+            else:
+                orient1 = np.rot90(blockarrays, j = i[0]['j'], axes = i[0]['axes'])
+                orient2 = np.rot90(orient1, j = i[1]['j'], axes = i[1]['axes'])
+                density = carve_sculpture_from_density_block(shapearrays, orient2)
+                meandensity32 = np.nanmean(meandensity.astype('float32'))
+                stabletatus = is_stable(meandensity)
+
+                degree0 = 90 * i[0]['j']
+                degree0str = str(degree0)
+                axes = 90 * i[0]['axes']
+                axestr = str(axes)
+
+                degree1 = 90 * i[1]['j']
+                degree1str = str(degree1)
+                axes2 = 90 * i[1]['axes']
+                axes2str = str(axes2)
+
+                status2.append([degree0str + "axis" + axestr + "," + degree1 + "axis" + axes2 + "," + meandensity32 + stabletatus])
 
 
 
@@ -331,16 +325,29 @@ def are_rotations_unique(list_of_rotations: List[List[dict]], verbose=False) -> 
 if __name__ == '__main__':
     # This section will need to be changed significantly. What's here are
     #  just some examples of loading and manipulating the arrays.
-    marble_file = []
-    shape_file = []
+    #要用for loop来优化一下
+    block_filenames = []
+    shape_filenames = []
+    marble_block_1 = np.load(file='data/marble_block_1.npy')
+    marble_block_2 = np.load(file='data/marble_block_2.npy')
+    marble_block_3 = np.load(file='data/marble_block_3.npy')
+    marble_block_4 = np.load(file='data/marble_block_4.npy')
+    marble_block_5 = np.load(file='data/marble_block_5.npy')
+    block_filenames.append(marble_block_1)
+    block_filenames.append(marble_block_2)
+    block_filenames.append(marble_block_3)
+    block_filenames.append(marble_block_4)
+    block_filenames.append(marble_block_5)
+    shape_1 = np.load(file='data/shape_1.npy')
+    shape_2 = np.load(file='data/shape_2.npy')
+    shape_filenames.append(shape_1)
+    shape_filenames.append(shape_2)
 
 
 
     # Load a "block" of variable-density marble:
-    marble_block_1 = np.load(file='data/marble_block_1.npy')
 
     # Load one array describing the 3D shape of the sculpture we want to carve from marble:
-    shape_1 = np.load(file='data/shape_1.npy')
 
     print(marble_block_1.shape)
     print(shape_1.shape)
